@@ -31,15 +31,24 @@ app.get("/", (req, res) => {
 
 // exercice 2
 app.get("/authors/:authorId", (req, res) => {
-  const author = authors.find((author, index) => {
-    return index.toString() === req.params.authorId;
-  });
+  const author = authors[parseInt(req.params.authorId) - 1];
+
   if (!author) {
     return res.json({
       message: "author not found",
     });
   }
   res.json(`${author.name}, ${author.nationality}`);
+});
+// exercice 3
+app.get("/authors/:authorId/books", (req, res) => {
+  const author = authors[parseInt(req.params.authorId) - 1];
+  if (!author) {
+    return res.json({
+      message: "author not found",
+    });
+  }
+  res.json(author.books.join(","));
 });
 app.listen(port, () => {
   console.log("Server started on port: " + port);
