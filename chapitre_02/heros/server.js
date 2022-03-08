@@ -1,5 +1,12 @@
 const express = require("express");
+
 const app = express();
+const transforName = (req, res, next) => {
+  if (req.body.name) {
+    req.body.name.toLowerCase();
+  }
+  next();
+};
 
 // debug middleware
 const debug = (req, res, next) => {
@@ -37,8 +44,28 @@ const superHeros = [
       "https://aws.vdkimg.com/film/2/5/1/1/251170_backdrop_scale_1280xauto.jpg",
   },
 ];
+// route qui renvoie tous les superHeros
 app.get("/heros", (req, res) => {
   res.json(superHeros);
+});
+
+// route qui renvoie par le nom
+app.get("/heros/:name", (req, res) => {
+  const hero = superHeros.find((hero) => {
+    return hero.name === req.params.name;
+  });
+  res.send(hero);
+});
+// route pour trouver le pouvoir
+app.get("/heros/:name/powers", (req, res) => {
+  const hero = superHeros.find((hero) => {
+    return hero.name === req.params.name;
+  });
+  res.send(hero.power);
+});
+// route hero ajouté
+app.post("/heros", transforName, (req, res) => {
+  res.send("ok hero ajouté");
 });
 
 app.get("*", (_req, res) => {
