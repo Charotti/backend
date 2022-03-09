@@ -14,6 +14,8 @@ const debug = (req, res, next) => {
   next();
 };
 app.use(debug);
+
+// pour le body
 app.use(express.json());
 const superHeros = [
   {
@@ -45,21 +47,21 @@ const superHeros = [
   },
 ];
 // route qui renvoie tous les superHeros
-app.get("/heros", (req, res) => {
+app.get("/heros", (_req, res) => {
   res.json(superHeros);
 });
 
 // route qui renvoie par le nom
 app.get("/heros/:name", (req, res) => {
   const hero = superHeros.find((hero) => {
-    return hero.name === req.params.name;
+    return hero.name.toLowerCase().replace("", "_") === req.params.name.toLowerCase().replace("", "_");
   });
   res.send(hero);
 });
 // route pour trouver le pouvoir
 app.get("/heros/:name/powers", (req, res) => {
   const hero = superHeros.find((hero) => {
-    return hero.name === req.params.name;
+    return hero.name.toLowerCase().replace("", "_")=== req.params.name.toLowerCase().replace("", "_");
   });
   res.send(hero.power);
 });
@@ -67,6 +69,8 @@ app.get("/heros/:name/powers", (req, res) => {
 app.post("/heros", transforName, (req, res) => {
   res.send("ok hero ajouté");
 });
+
+// recopier patch
 
 app.get("*", (_req, res) => {
   res.status(404).send("Page not found");
