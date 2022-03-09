@@ -23,10 +23,10 @@ const users = [
 
 // ROUTES
 
-app.get("/", (_req, res) => {
+router.get("/", (_req, res) => {
   res.json(users);
 });
-app.post("/", (req, res) => {
+router.post("/", (req, res) => {
   const user = req.body;
 
   const validationResult = schema.validate(user);
@@ -39,9 +39,9 @@ app.post("/", (req, res) => {
   users.push(user);
   res.json({ message: "User has been added", users });
 });
-// router.get("/users/:userName", (req, res) => {
-//     res.send
-// })
+router.get("/users/:userName", (req, res) => {
+  res.send("usersName" + req.params.userName);
+});
 
 app.listen(8000, () => {
   console.log("server started en port: ");
