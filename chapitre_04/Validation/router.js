@@ -68,5 +68,15 @@ router.get("/users/id/:id", (req, res) => {
   }
   res.json(user);
 });
+// trouver la route par email
+router.get("/users/email/:email", (req, res) => {
+  const user = users.find((user) => {
+    return user.email.toString() === req.params.email.toString();
+  });
+  if (!user) {
+    return res.send("User not found");
+  }
+  res.json(user);
+});
 
 module.exports = router;
