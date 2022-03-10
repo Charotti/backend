@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 
 export default function App() {
   const [students, setStudents] = useState();
+  const [value, setValue] = useState("");
   useEffect(() => {
     axios
       .get("http://localhost:8000/students")
@@ -16,9 +17,22 @@ export default function App() {
       });
     }
   }
-
+  function onSubmit(e) {
+    e.preventDefault();
+  }
   return students ? (
-    <ul>{studentsList()}</ul>
+    <div>
+      <ul>{studentsList()}</ul>
+      <form onSubmit={(e) => onSubmit(e)}>
+        <input
+          type="text"
+          onChange={(e) => {
+            setValue(e.target.value);
+          }}
+        />
+        <button onClick={console.log(value)}>Valider</button>
+      </form>
+    </div>
   ) : (
     <div>
       <p>Liste en chargement</p>
