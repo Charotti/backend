@@ -12,10 +12,19 @@ const schema = Joi.object({
 });
 const users = [
   {
+    id: 1,
     userName: "Caroline",
     email: "caroline@gmail.com",
     age: 25,
     city: "Carennac",
+  },
+
+  {
+    id: 2,
+    userName: "Sophie",
+    email: "Sophie@gmail.com",
+    age: 32,
+    city: "Vayrac",
   },
 ];
 // / ROUTES
@@ -48,4 +57,16 @@ router.get("/users/:userName", (req, res) => {
   }
   res.json(user);
 });
+// Trouver la route par id
+router.get("/users/id/:id", (req, res) => {
+  const user = users.find((user) => {
+    return user.id.toString() === req.params.id;
+  });
+
+  if (!user) {
+    return res.send("User not found");
+  }
+  res.json(user);
+});
+
 module.exports = router;
