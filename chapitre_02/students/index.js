@@ -1,6 +1,8 @@
 const express = require("express");
 const app = express();
 app.use(express.json());
+const cors = require("cors");
+app.use(cors());
 
 const students = [
   {
@@ -22,10 +24,18 @@ const students = [
     gender: "M",
   },
 ];
+// page d'accueil
+app.get("/", (_req, res) => {
+  res.send("homepage");
+});
+// route vers la liste de tous les étudiants
 
 app.get("/students", (req, res) => {
   res.json(students);
 });
+
+// route pour le nom de l'étudiant dans le body
+
 app.post("/students", (req, res) => {
   students.push({
     id: students.length + 1,
