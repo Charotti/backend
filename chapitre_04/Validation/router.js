@@ -3,7 +3,7 @@ const router = express.Router();
 const Joi = require("Joi");
 
 const schema = Joi.object({
-  userName: Joi.string().min(4).required(),
+  userName: Joi.string().alphanum().min(4).required(),
   email: Joi.string()
     .email({ minDomainSegments: 2, tlds: { allow: ["com", "net"] } })
     .required(),

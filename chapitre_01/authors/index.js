@@ -1,6 +1,13 @@
 const express = require("express");
+const dotenv = require("dotenv");
+dotenv.config({
+  path: "./config.env",
+});
+const { Pool } = require("pg");
 const app = express();
+app.use(express.json());
 const port = 8000;
+const Postgres = new Pool({ ssl: { rejectUnauthorized: false } });
 const authors = [
   {
     name: "Lawrence Nowell",
@@ -30,16 +37,14 @@ app.get("/", (req, res) => {
 });
 
 // exercice 2
-app.get("/authors/:authorId", (req, res) => {
-  const author = authors[parseInt(req.params.authorId) - 1];
-
-  if (!author) {
-    return res.json({
-      message: "author not found",
-    });
-  }
-  res.json(`${author.name}, ${author.nationality}`);
+app.get("/authors/:id", async (req, res) => {
+  const authors = await Postgres.query(
+    "SELECT author_name, nationality FROM authors WHERE authors.author_id=$1",
+    [req.params.id]
+  );
+  res.json(authors.rows);
 });
+
 // exercice 3
 app.get("/authors/:authorId/books", (req, res) => {
   const author = authors[parseInt(req.params.authorId) - 1];
