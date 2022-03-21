@@ -43,14 +43,18 @@ app.get("/students", async (req, res) => {
 
 // route pour le nom de l'étudiant dans le body
 
-app.post("/students", (req, res) => {
-  students.push({
-    id: students.length + 1,
-    name: req.body.name,
-    age: req.body.age,
-    gender: req.body.gender,
-  });
-  res.json(students);
+app.post("/students", async (req, res) => {
+  try {
+    await Postgres.query(
+      "INSERT INTO students (student_name, age, gender) VALUES ($1, $2, $3)",
+      [req.body.student_name, req.body.age, req.body.gender]
+    );
+  } catch (err) {
+    return res.status(400).json({
+      message: "An error happened. Bad data received.",
+    });
+  }
+  res.json({ message: `Student ${req.body.name} added to the database` });
 });
 
 app.get("*", (_req, res) => {
