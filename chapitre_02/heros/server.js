@@ -1,4 +1,10 @@
 const express = require("express");
+const dotenv = require("dotenv");
+dotenv.config({
+  path: "./config.env",
+});
+const { Pool } = require("pg");
+const Postgres = new Pool({ ssl: { rejectUnauthorized: false } });
 
 const app = express();
 const transforName = (req, res, next) => {
@@ -47,21 +53,28 @@ const superHeros = [
   },
 ];
 // route qui renvoie tous les superHeros
-app.get("/heros", (_req, res) => {
-  res.json(superHeros);
+app.get("/heroes", async (_req, res) => {
+  const hero = await Postgres.query("SELECT * FROM heroes");
+  res.json(hero.rows);
 });
 
 // route qui renvoie par le nom
 app.get("/heros/:name", (req, res) => {
   const hero = superHeros.find((hero) => {
-    return hero.name.toLowerCase().replace("", "_") === req.params.name.toLowerCase().replace("", "_");
+    return (
+      hero.name.toLowerCase().replace("", "_") ===
+      req.params.name.toLowerCase().replace("", "_")
+    );
   });
   res.send(hero);
 });
 // route pour trouver le pouvoir
 app.get("/heros/:name/powers", (req, res) => {
   const hero = superHeros.find((hero) => {
-    return hero.name.toLowerCase().replace("", "_")=== req.params.name.toLowerCase().replace("", "_");
+    return (
+      hero.name.toLowerCase().replace("", "_") ===
+      req.params.name.toLowerCase().replace("", "_")
+    );
   });
   res.send(hero.power);
 });
