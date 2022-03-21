@@ -1,8 +1,14 @@
 const express = require("express");
+const dotenv = require("dotenv");
 const app = express();
 app.use(express.json());
 const cors = require("cors");
 app.use(cors());
+dotenv.config({
+  path: "./config.env",
+});
+const { Pool } = require("pg");
+const Postgres = new Pool({ ssl: { rejectUnauthorized: false } });
 
 const students = [
   {
@@ -30,8 +36,9 @@ app.get("/", (_req, res) => {
 });
 // route vers la liste de tous les étudiants
 
-app.get("/students", (req, res) => {
-  res.json(students);
+app.get("/students", async (req, res) => {
+  const student = await Postgres.query("SELECT * FROM students");
+  res.json(student.rows);
 });
 
 // route pour le nom de l'étudiant dans le body
