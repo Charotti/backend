@@ -54,32 +54,24 @@ const superHeros = [
 ];
 // route qui renvoie tous les superHeros
 app.get("/heroes", async (_req, res) => {
-  const hero = await Postgres.query("SELECT * FROM heroes");
+  const hero = await Postgres.query("SELECT * FROM heroes;");
   res.json(hero.rows);
 });
 
 // route qui renvoie par le nom
-app.get("/heros/:name", (req, res) => {
-  const hero = superHeros.find((hero) => {
-    return (
-      hero.name.toLowerCase().replace("", "_") ===
-      req.params.name.toLowerCase().replace("", "_")
-    );
-  });
-  res.send(hero);
+app.get("/heroes/:name", async (_req, res) => {
+  const hero = await Postgres.query("SELECT name FROM heroes");
+
+  res.json(hero.rows);
 });
 // route pour trouver le pouvoir
-app.get("/heros/:name/powers", (req, res) => {
-  const hero = superHeros.find((hero) => {
-    return (
-      hero.name.toLowerCase().replace("", "_") ===
-      req.params.name.toLowerCase().replace("", "_")
-    );
-  });
-  res.send(hero.power);
+app.get("/heroes/:name/power", async (_req, res) => {
+  const hero = await Postgres.query("SELECT name, power FROM heroes");
+
+  res.json(hero.rows);
 });
 // route hero ajouté
-app.post("/heros", transforName, (req, res) => {
+app.post("/heroes", transforName, (req, res) => {
   res.send("ok hero ajouté");
 });
 
