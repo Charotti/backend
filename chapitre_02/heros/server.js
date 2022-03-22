@@ -59,8 +59,11 @@ app.get("/heroes", async (_req, res) => {
 });
 
 // route qui renvoie par le nom
-app.get("/heroes/:name", async (_req, res) => {
-  const hero = await Postgres.query("SELECT name FROM heroes");
+app.get("/heroes/:name", async (req, res) => {
+  const hero = await Postgres.query(
+    "SELECT name FROM heroes WHERE  LOWER(name)=$1",
+    [req.params.name]
+  );
 
   res.json(hero.rows);
 });
@@ -89,13 +92,25 @@ app.post("/heroes", async (req, res) => {
       message: "An error happened. Bad data received.",
     });
   }
-  res.json({ message: `hero ${req.body.name} added to the database ` });
+  res.json({ message: `hero ${req.body.name} added to the database` });
 });
 
 // recopier patch
 
-app.get("*", (_req, res) => {
-  res.status(404).send("Page not found");
+app.patch("/heroes/:name/power", async (req, res) => {
+  console.log(req.body.power, req.params.name);
+  try {
+    await Postgres.query("UPDATE heroes SET power=$1 WHERE LOWER(name)=$2", [
+      req.body.power,
+      req.params.name.toLowerCase(),
+    ]);
+  } catch (err) {
+    console.log(err);
+    return res.status(400).json({
+      message: "An error happened. Bad data received.",
+    });
+  }
+  res.json({ message: `hero ${req.body.power} added to the database` });
 });
 
 app.listen(8000, () => console.log("Listening..."));
