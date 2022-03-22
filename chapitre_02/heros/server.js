@@ -71,8 +71,25 @@ app.get("/heroes/:name/power", async (_req, res) => {
   res.json(hero.rows);
 });
 // route hero ajouté
-app.post("/heroes", transforName, (req, res) => {
-  res.send("ok hero ajouté");
+app.post("/heroes", async (req, res) => {
+  try {
+    await Postgres.query(
+      "INSERT INTO heroes(name, power, color, isAlive, age, image) VALUES ($1, $2, $3, $4, $5, $6)",
+      [
+        req.body.name,
+        req.body.power,
+        req.body.color,
+        req.body.isAlive,
+        req.body.age,
+        req.body.image,
+      ]
+    );
+  } catch (err) {
+    return res.status(400).json({
+      message: "An error happened. Bad data received.",
+    });
+  }
+  res.json({ message: `hero ${req.body.name} added to the database ` });
 });
 
 // recopier patch
