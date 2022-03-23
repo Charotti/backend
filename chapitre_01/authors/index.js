@@ -1,13 +1,24 @@
 const express = require("express");
 const dotenv = require("dotenv");
-dotenv.config({
-  path: "./config.env",
-});
-const { Pool } = require("pg");
+const mongoose = require("mongoose");
+const Author = require("./models/authorModel");
+// dotenv.config({
+//   path: "./config.env",
+// });
+// const { Pool } = require("pg");
 const app = express();
 app.use(express.json());
-const port = 8000;
-const Postgres = new Pool({ ssl: { rejectUnauthorized: false } });
+const port = 8001;
+// const Postgres = new Pool({ ssl: { rejectUnauthorized: false } });
+mongoose
+  .connect(
+    "mongodb+srv://chariotte:ojUH2JABbP49KWX0@cluster0.zekqb.mongodb.net/konexio?retryWrites=true&w=majority",
+    {
+      useNewUrlParser: true,
+    }
+  )
+  .then(() => console.log("Connected to MongoDB"));
+
 const authors = [
   {
     name: "Lawrence Nowell",
@@ -32,17 +43,29 @@ const authors = [
 ];
 
 // Exercice 1
-app.get("/", (req, res) => {
-  res.send("autors API");
+// app.get("/", (req, res) => {
+//   res.send("autors API");
+// });
+app.get("/", (_req, res) => {
+  res.send("welcome");
 });
 
 // exercice 2
+// app.get("/authors/:id", async (req, res) => {
+//   const authors = await Postgres.query(
+//     "SELECT author_name, nationality FROM authors WHERE authors.author_id=$1",
+//     [req.params.id]
+//   );
+//   res.json(authors);
+// });
+// Avec Mongo
+app.get("/authors", async (_req, res) => {
+  const authors = await Author.find();
+  res.json(authors);
+});
 app.get("/authors/:id", async (req, res) => {
-  const authors = await Postgres.query(
-    "SELECT author_name, nationality FROM authors WHERE authors.author_id=$1",
-    [req.params.id]
-  );
-  res.json(authors.rows);
+  const author = await Author.findById(req.params.id);
+  res.json(author);
 });
 
 // exercice 3
