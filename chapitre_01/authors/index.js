@@ -2,6 +2,7 @@ const express = require("express");
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
 const Author = require("./models/authorModel");
+const { user } = require("pg/lib/defaults");
 // dotenv.config({
 //   path: "./config.env",
 // });
@@ -49,7 +50,12 @@ const authors = [
 app.get("/", (_req, res) => {
   res.send("welcome");
 });
-
+app.post("/authors", async (req, res) => {
+  await Author.create(req.body);
+  res.status(201).json({
+    message: "Author created",
+  });
+});
 // exercice 2
 // app.get("/authors/:id", async (req, res) => {
 //   const authors = await Postgres.query(
