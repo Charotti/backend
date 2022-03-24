@@ -72,22 +72,34 @@ app.get("/students", async (req, res) => {
   res.json(students);
 });
 
-// route pour le nom de l'étudiant dans le body
+// route pour ajouter le nom d'un etudiant
 
-app.post("/students", async (req, res) => {
+// app.post("/students", async (req, res) => {
+//   try {
+//     await Postgres.query(
+//       "INSERT INTO students (student_name, age, gender) VALUES ($1, $2, $3)",
+//       [req.body.student_name, req.body.age, req.body.gender]
+//     );
+//   } catch (err) {
+//     return res.status(400).json({
+//       message: "An error happened. Bad data received.",
+//     });
+//   }
+//   res.json({ message: `Student ${req.body.name} added to the database` });
+// });
+
+// la route pour ajouter  le nom de l'étudiant avec mongoDB"
+app.post("/students/name", async (req, res) => {
+  let students;
   try {
-    await Postgres.query(
-      "INSERT INTO students (student_name, age, gender) VALUES ($1, $2, $3)",
-      [req.body.student_name, req.body.age, req.body.gender]
-    );
+    students = await Student.create(req.body);
   } catch (err) {
     return res.status(400).json({
-      message: "An error happened. Bad data received.",
+      message: "an error happened",
     });
   }
-  res.json({ message: `Student ${req.body.name} added to the database` });
+  res.json(students);
 });
-
 app.get("*", (_req, res) => {
   res.status(404).send("Page not found");
 });
