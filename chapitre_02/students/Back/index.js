@@ -1,17 +1,24 @@
 const express = require("express");
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
-const Student = require("../");
+const Student = require("./models/studentModel");
 const app = express();
 app.use(express.json());
 const cors = require("cors");
 app.use(cors());
-dotenv.config({
-  path: "./config.env",
-});
-const { Pool } = require("pg");
-const Postgres = new Pool({ ssl: { rejectUnauthorized: false } });
-
+// dotenv.config({
+//   path: "./config.env",
+// });
+// const { Pool } = require("pg");
+// const Postgres = new Pool({ ssl: { rejectUnauthorized: false } });
+mongoose
+  .connect(
+    "mongodb+srv://chariotte:ojUH2JABbP49KWX0@cluster0.zekqb.mongodb.net/konexio?retryWrites=true&w=majority",
+    {
+      useNewUrlParser: true,
+    }
+  )
+  .then(() => console.log("Connected to MongoDB"));
 const students = [
   {
     id: 1,
@@ -32,6 +39,16 @@ const students = [
     gender: "M",
   },
 ];
+
+app.post("/students", async (req, res) => {
+  try {
+    await Student.create(req.body);
+  } catch (err) {
+    console.log(err);
+    return res.status(400).send("error 400");
+  }
+  res.status(201).json({ message: "Etudiant ajouté" });
+});
 // page d'accueil
 app.get("/", (_req, res) => {
   res.send("homepage");
@@ -63,6 +80,6 @@ app.get("*", (_req, res) => {
   res.status(404).send("Page not found");
 });
 
-app.listen(8000, () => {
+app.listen(8001, () => {
   console.log("Listening");
 });
