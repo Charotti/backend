@@ -19,27 +19,27 @@ mongoose
     }
   )
   .then(() => console.log("Connected to MongoDB"));
-const students = [
-  {
-    id: 1,
-    name: "Nicolas",
-    age: 18,
-    gender: "M",
-  },
-  {
-    id: 2,
-    name: "Anita",
-    age: 26,
-    gender: "F",
-  },
-  {
-    id: 3,
-    name: "Djibril",
-    age: 29,
-    gender: "M",
-  },
-];
-
+// const students = [
+//   {
+//     id: 1,
+//     name: "Nicolas",
+//     age: 18,
+//     gender: "M",
+//   },
+//   {
+//     id: 2,
+//     name: "Anita",
+//     age: 26,
+//     gender: "F",
+//   },
+//   {
+//     id: 3,
+//     name: "Djibril",
+//     age: 29,
+//     gender: "M",
+//   },
+// ];
+//Ajout dans la BD avec mongoDB//
 app.post("/students", async (req, res) => {
   try {
     await Student.create(req.body);
@@ -49,15 +49,27 @@ app.post("/students", async (req, res) => {
   }
   res.status(201).json({ message: "Etudiant ajouté" });
 });
-// page d'accueil
+// page d'accueil (idem avec mongodb)
 app.get("/", (_req, res) => {
   res.send("homepage");
 });
 // route vers la liste de tous les étudiants
 
+// app.get("/students", async (req, res) => {
+//   const student = await Postgres.query("SELECT * FROM students");
+//   res.json(student.rows);
+// });
+//Route vers tous les étudiants avec mongoDB//
 app.get("/students", async (req, res) => {
-  const student = await Postgres.query("SELECT * FROM students");
-  res.json(student.rows);
+  let students;
+  try {
+    students = await Student.find();
+  } catch (err) {
+    return res.status(400).json({
+      message: "An error happened.Bad data received.",
+    });
+  }
+  res.json(students);
 });
 
 // route pour le nom de l'étudiant dans le body
