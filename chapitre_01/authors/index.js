@@ -3,6 +3,7 @@ const dotenv = require("dotenv");
 const mongoose = require("mongoose");
 const Author = require("./models/authorModel");
 const { user } = require("pg/lib/defaults");
+const { populate } = require("./models/authorModel");
 // dotenv.config({
 //   path: "./config.env",
 // });
@@ -75,13 +76,21 @@ app.get("/authors/:id", async (req, res) => {
 });
 
 // exercice 3
+// app.get("/authors/:id/books", async (req, res) => {
+//   const books = await Postgres.query(
+//     " SELECT books FROM authors WHERE author_id=$1",
+//     [req.params.id]
+//   );
+//   res.json(books.rows);
+// });
+
+// Avec Mongo
+
 app.get("/authors/:id/books", async (req, res) => {
-  const books = await Postgres.query(
-    " SELECT books FROM authors WHERE author_id=$1",
-    [req.params.id]
-  );
-  res.json(books.rows);
+  const author = await Author.findById(req.params.id).select("Books");
+  res.json(author);
 });
+
 // exercice 4
 app.get("/json/authors/:authorId", (req, res) => {
   const author = authors[parseInt(req.params.authorId) - 1];
