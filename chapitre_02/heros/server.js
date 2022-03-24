@@ -74,14 +74,11 @@ app.post("/heroes", async (req, res) => {
   let heroes;
   try {
     heroes = await Hero.create(req.body);
-    res.status(201).json({
-      message: "heroe created",
-    });
   } catch (err) {
     console.log(err);
     return res.status(400).send("error 400");
   }
-  res.json(heroes);
+  res.status(201).json("hero created");
 });
 
 // route qui renvoie par le nom
@@ -93,12 +90,34 @@ app.post("/heroes", async (req, res) => {
 
 //   res.json(hero.rows);
 // });
+app.get("/heroes/:name", async (req, res) => {
+  let heroes;
+  try {
+    heroes = await Hero.find(req.params);
+  } catch (err) {
+    console.log(err);
+    return res.status(400).send("error 400");
+  }
+  res.json(heroes);
+});
 // route pour trouver le pouvoir
 // app.get("/heroes/:name/power", async (_req, res) => {
 //   const hero = await Postgres.query("SELECT name, power FROM heroes");
 
 //   res.json(hero.rows);
 // });
+
+app.get("/heroes/:name/power", async (req, res) => {
+  let powers;
+  try {
+    powers = await Hero.find(req.params);
+    powers = { name: powers[0].name, powers: powers[0].power };
+  } catch (err) {
+    console.log(err);
+    return res.status(400).send("error 400");
+  }
+  res.json(powers);
+});
 // route hero ajouté
 // app.post("/heroes", async (req, res) => {
 //   try {
@@ -138,5 +157,21 @@ app.post("/heroes", async (req, res) => {
 //   }
 //   res.json({ message: `hero ${req.body.power} added to the database` });
 // });
+
+app.patch("/heroes/:name/power", async (req, res) => {
+  let powers;
+  try {
+    powers = await Hero.find(req.params);
+    powers = powers[0].power;
+    powers.push(req.body.power);
+    await Hero.updateOne(req.params, { power: powers });
+  } catch (err) {
+    console.log(err);
+    return res.status(400).json({
+      message: "An error happened. Bad data received",
+    });
+  }
+  res.json(powers);
+});
 
 app.listen(8001, () => console.log("Listening..."));
