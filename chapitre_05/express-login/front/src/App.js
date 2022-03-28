@@ -1,6 +1,6 @@
 import React from "react";
 import { BrowserRouter, Route, Link, Switch } from "react-router-dom";
-
+// const axios = require("axios");
 import Admin from "./pages/Admin";
 import SignUp from "./pages/SignUp";
 import Login from "./pages/Login";
