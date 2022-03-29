@@ -11,6 +11,7 @@ export default function Signup() {
     setPwd(e.target.value);
   };
   const onSubmit = (e) => {
+    //évite le rafraichissement
     e.preventDefault();
     let body = { name: name, password: pwd };
     axios({
